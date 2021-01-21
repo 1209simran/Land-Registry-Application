@@ -39,28 +39,31 @@ https://dashboard.nexmo.com/sign-up
 ## Getting Started
 To set up the project, go along with the following steps:-
 - Clone the repository.
-- Go to the directory with the repository.
+- Go to the directory with the repository. <br/>
 `$ cd folder_name`
-- Run **npm install** (or **yarn install** if you use yarn) to download the npm packages.
+- Run **npm install** (or **yarn install** if you use yarn) to download the npm packages. <br/>
 `$ npm install`
 - Open Ganache.
-- Run **truffle compile** to compile the truffle project.
+- Run **truffle compile** to compile the truffle project. <br/>
 `$ truffle compile`
-- Run **truffle migrate** to deploy the contacts.
+- Run **truffle migrate** to deploy the contacts. <br/>
 `$ truffle migrate`
-- Run **npm start** to start the project.
+- Run **npm start** to start the project. <br/>
 `$ npm start`
-- Open another terminal and navigate to the **Server** folder.
+- Open another terminal and navigate to the **Server** folder. <br/>
 `$ cd Server`
-- Run **npm install** (or **yarn install** if you use yarn) to download the npm packages.
+- Run **npm install** (or **yarn install** if you use yarn) to download the npm packages. <br/>
 `$ npm install`
-- Navigate to the **backend** folder then to the **Config** folder.
+- Navigate to the **backend** folder then to the **Config** folder. <br/>
 `$ cd backend/Config`
 - Change the credentials of **db_config.js** .
-- Run the server using this command:-
+- Run the server using this command:- <br/>
 `$ npm start`
-- Open another terminal and execute the following command to add the government registrar detail to the database.
+- Open another terminal and execute the following command to add the government registrar detail to the database. <br/>
 `$ curl -X POST http://localhost:3001/register_govt`
+- Credential for government login:- <br/>
+Username:- Delhi Government <br/>
+Password:- Delhi
 - You're all done. Enjoy!
 
 ## Workflow
