@@ -82,7 +82,6 @@ Once the Government is approving it, the landowner has the option to make their 
 When the land is available to buy, the buyer moves toward their dashboard, and in the available properties section, they search for the property and send a request to the landowner to buy it.
 - **Viewing the request**
 Land proprietor views the buyer's requests and after communicating with them, plans whether to allow them to buy the land or not. They have the option to accept or decline the request.
-Processing the request}
 - **Processing the request**
 Once the landowner views the requester address and if it founds to be the right one, then the seller accepts the request.
 - **Buying the property**
