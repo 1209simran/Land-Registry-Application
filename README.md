@@ -38,7 +38,8 @@ https://dashboard.nexmo.com/sign-up
 
 ## Getting Started
 To set up the project, go along with the following steps:-
-- Clone the repository.
+- Clone the repository. <br/>
+`$ git clone https://github.com/1209simran/Land-Registry-Application.git`
 - Go to the directory with the repository. <br/>
 `$ cd folder_name`
 - Run **npm install** (or **yarn install** if you use yarn) to download the npm packages. <br/>
@@ -61,7 +62,7 @@ To set up the project, go along with the following steps:-
 `$ npm start`
 - Open another terminal and execute the following command to add the government registrar detail to the database. <br/>
 `$ curl -X POST http://localhost:3001/register_govt`
-- Credential for government login:- <br/>
+- Credentials for government login:- <br/>
 Username:- Delhi Government <br/>
 Password:- Delhi
 - You're all done. Enjoy!
