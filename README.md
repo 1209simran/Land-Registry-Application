@@ -47,7 +47,7 @@ To set up the project, go along with the following steps:-
 - Open Ganache.
 - Run **truffle compile** to compile the truffle project. <br/>
 `$ truffle compile`
-- Run **truffle migrate** to deploy the contacts. <br/>
+- Run **truffle migrate** to deploy the contracts. <br/>
 `$ truffle migrate`
 - Run **npm start** to start the project. <br/>
 `$ npm start`
