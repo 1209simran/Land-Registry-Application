@@ -21,14 +21,14 @@
 		"ipfs-api": "^26.1.2",
 		"ipfs-http-client": "^46.0.0",
 		"jwt-decode": "^2.2.0",
-		"react": "^16.13.1",
+		"react": "^16.14.0",
 		"react-bootstrap": "1.0.0-beta.5",
 		"react-dom": "^16.13.1",
 		"react-router-dom": "^5.2.0",
 		"react-scripts": "3.4.3",
+		"react-typewriter-effect": "^1.1.0",
 		"truffle": "5.0.5",
-		"typewriter-effect": "^2.13.1",
-		"web3": "1.0.0-beta.37"
+		"web3": "1.2"
 	},
 	"scripts": {
 		"start": "react-scripts start",
