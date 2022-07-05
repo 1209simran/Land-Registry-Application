@@ -1,225 +1,107 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.8;
+pragma experimental ABIEncoderV2;
 
-contract LandRegistry {
-    struct Task {
-        uint256 id;
-        string content;
-        bool completed;
-    }
-    struct user {
-        address userid;
-        string uname;
-        uint256 ucontact;
-        string uemail;
-        uint256 upostalCode;
-        string city;
-        bool exist;
-    }
-    struct landDetails {
-        address payable id;
-        string ipfsHash;
-        string laddress;
-        uint256 lamount;
-        uint256 key;
-        string isGovtApproved;
-        string isAvailable;
-        address requester;
-        reqStatus requestStatus;
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+
+contract blockporb is ERC721("HelloNft", "HNFT") {
+    // property struct
+    // TODO rename, Block?
+    struct Property {
+        uint128 x;
+        uint128 y;
+        uint128 size;
+        address owner;
+        uint256 propertyID;
     }
 
-    address[] userarr;
-    uint256[] assets;
-    address owner;
-    enum reqStatus {Default, Pending, Rejected, Approved}
+    //Owner struct
+    struct Owner {
+        address taxID;
+        address payable etheriumID;
+        string name;
+    }
 
+
+    /*** data structures ***/
+    address[] ownerArr;
+    // id to property struct
+    mapping(uint256 => Property) public idToProperties;
+    // owner address to id list
+    mapping(address => Owner) public idToOwner;
+    // TODO maybe nested mapping?
+    mapping(address => uint256[]) public ownerToPropertyList;
+
+    /*** events ***/
+    //TODO compare https://stackoverflow.com/questions/67485324/solidity-typeerror-overriding-function-is-missing-override-specifier
+    // either inherit ERC721 or implement these events
+    //event Transfer(address indexed _from, address indexed _to, uint256 indexed _tokenId);
+    //event Approval(address indexed _owner, address indexed _approved, uint256 indexed _tokenId);
+    //event ApprovalForAll(address indexed _owner, address indexed _operator, bool _approved);
+
+    /*** own functions ***/
+    // assign initial property to caller of constructor
     constructor() public {
-        owner = msg.sender;
+        Property memory init = Property(0, 0, maxSize(), msg.sender, 0);
+        addStructToAddress(init, msg.sender);
+        // TODO save msg.sender as authority
     }
 
-    struct profiles {
-        uint256[] assetList;
+    // return the maximum size a property object can have
+    function maxSize() public view returns (uint128) {
+        // half of max uint256 because id is uint256
+        return 2 ** 128 - 1;
     }
 
-    mapping(address => profiles) profile;
-
-    mapping(address => user) public users;
-    mapping(uint256 => landDetails) public land;
-
-    function addUser(
-        address uid,
-        string memory _uname,
-        uint256 _ucontact,
-        string memory _uemail,
-        uint256 _ucode,
-        string memory _ucity
-    ) public returns (bool) {
-        users[uid] = user(
-            uid,
-            _uname,
-            _ucontact,
-            _uemail,
-            _ucode,
-            _ucity,
-            true
-        );
-        userarr.push(uid);
-        return true;
+    // create ID by writing x and y in one variable which produces unique identifier
+    function getId(Property memory prob) public returns (uint256) {
+        uint256 id = prob.y * maxSize();
+        id = id & prob.x;
+        return id;
     }
 
-    function getUser(address uid)
-        public
-        view
-        returns (
-            address,
-            string memory,
-            uint256,
-            string memory,
-            uint256,
-            string memory,
-            bool
-        )
-    {
-        if (users[uid].exist)
-            return (
-                users[uid].userid,
-                users[uid].uname,
-                users[uid].ucontact,
-                users[uid].uemail,
-                users[uid].upostalCode,
-                users[uid].city,
-                users[uid].exist
-            );
+    // convinience function to add a Property to an address in all relevant data structures
+    function addStructToAddress(Property memory prob, address owner) private {
+        prob.owner = owner;
+        uint256 id = getId(prob);
+        idToProperties[id] = prob;
+
+        uint256[] storage list = ownerToPropertyList[owner];
+        list.push(id);
+        ownerToPropertyList[owner] = list;
     }
 
-    function Registration(
-        address payable _id,
-        string memory _ipfsHash,
-        string memory _laddress,
-        uint256 _lamount,
-        uint256 _key,
-        string memory status,
-        string memory _isAvailable
-    ) public returns (bool) {
-        land[_key] = landDetails(
-            _id,
-            _ipfsHash,
-            _laddress,
-            _lamount,
-            _key,
-            status,
-            _isAvailable,
-            0x0000000000000000000000000000000000000000,
-            reqStatus.Default
-        );
-        profile[_id].assetList.push(_key);
-        assets.push(_key);
-        return true;
-    }
-
-    function computeId(string memory _laddress, string memory _lamount)
-        public
-        view
-        returns (uint256)
-    {
-        return
-            uint256(keccak256(abi.encodePacked(_laddress, _lamount))) %
-            10000000000000;
-    }
-
-    function viewAssets() public view returns (uint256[] memory) {
-        return (profile[msg.sender].assetList);
-    }
-
-    function Assets() public view returns (uint256[] memory) {
-        return assets;
-    }
-
-    function landInfoOwner(uint256 id)
-        public
-        view
-        returns (
-            address payable,
-            string memory,
-            uint256,
-            string memory,
-            string memory,
-            address,
-            reqStatus
-        )
-    {
-        return (
-            land[id].id,
-            land[id].ipfsHash,
-            land[id].lamount,
-            land[id].isGovtApproved,
-            land[id].isAvailable,
-            land[id].requester,
-            land[id].requestStatus
-        );
-    }
-
-    function govtStatus(
-        uint256 _id,
-        string memory status,
-        string memory _isAvailable
-    ) public returns (bool) {
-        land[_id].isGovtApproved = status;
-        land[_id].isAvailable = _isAvailable;
-        return true;
-    }
-
-    function makeAvailable(uint256 property) public {
-        require(land[property].id == msg.sender);
-        land[property].isAvailable = "Available";
-    }
-
-    function requstToLandOwner(uint256 id) public {
-        land[id].requester = msg.sender;
-        land[id].isAvailable = "Pending";
-        land[id].requestStatus = reqStatus.Pending;
-    }
-
-    function processRequest(uint256 property, reqStatus status) public {
-        require(land[property].id == msg.sender);
-        land[property].requestStatus = status;
-        land[property].isAvailable = "Approved";
-        if (status == reqStatus.Rejected) {
-            land[property].requester = address(0);
-            land[property].requestStatus = reqStatus.Default;
-            land[property].isAvailable = "Available";
+    // extension of balanceOf returning the total size of the owner's property
+    function areaBalanceOf(address _owner) external view returns (uint256) {
+        uint256[] memory list = ownerToPropertyList[_owner];
+        uint256 totalArea = 0;
+        for (uint i=0; i<list.length; i++) {
+            uint256 iArea = idToProperties[list[i]].size;
+            totalArea += iArea ** 2;
         }
+        return totalArea;
     }
 
-    function buyProperty(uint256 property) public payable {
-        require(land[property].requestStatus == reqStatus.Approved);
-        require(msg.value == (land[property].lamount * 1000000000000000000));
-        land[property].id.transfer(
-            land[property].lamount * 1000000000000000000
-        );
-        removeOwnership(land[property].id, property);
-        land[property].id = msg.sender;
-        land[property].isGovtApproved = "Not Approved";
-        land[property].isAvailable = "Not yet approved by the govt.";
-        land[property].requester = address(0);
-        land[property].requestStatus = reqStatus.Default;
-        profile[msg.sender].assetList.push(property);
+    /*** ERC721 functions ***/
+    // number of tokens for given owner
+    function balanceOf(address _owner) public override view returns (uint256) {
+        uint256[] memory list = ownerToPropertyList[_owner];
+        return list.length;
+    }
+    // owner for property
+    function ownerOf(uint256 _tokenId) public override view returns (address) {
+        return idToProperties[_tokenId].owner;
     }
 
-    function removeOwnership(address previousOwner, uint256 id) private {
-        uint256 index = findId(id, previousOwner);
-        profile[previousOwner].assetList[index] = profile[previousOwner]
-            .assetList[profile[previousOwner].assetList.length - 1];
-        delete profile[previousOwner].assetList[profile[previousOwner]
-            .assetList
-            .length - 1];
-        profile[previousOwner].assetList.length--;
+    // function for the land registry to registry owners
+    function registrateOwner(address _taxID, address payable _etheriumID, string memory _name) private returns (bool) {
+            if(ownerArr.)
+            idToOwner[_taxID] = Owner(_taxID, _etheriumID, _name);
+
+            ownerArr.push(_taxID);
+            return true;
     }
 
-    function findId(uint256 id, address user) public view returns (uint256) {
-        uint256 i;
-        for (i = 0; i < profile[user].assetList.length; i++) {
-            if (profile[user].assetList[i] == id) return i;
-        }
-        return i;
-    }
+
+    // TODO transfer
+
 }
